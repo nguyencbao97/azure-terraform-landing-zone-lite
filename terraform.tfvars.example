@@ -1,0 +1,9 @@
+subscription_id = "00000000-0000-0000-0000-000000000000"
+project_name = "cloudlab"
+environment  = "dev"
+location     = "eastus"
+owner        = "bao-nguyen"
+
+address_space         = ["10.20.0.0/16"]
+public_subnet_prefix  = ["10.20.1.0/24"]
+private_subnet_prefix = ["10.20.2.0/24"]

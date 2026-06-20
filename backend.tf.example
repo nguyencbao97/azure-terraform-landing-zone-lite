@@ -1,0 +1,12 @@
+# Example only.
+# Rename this file to backend.tf after you create the storage account/container for Terraform state.
+# Do not commit real state files or secrets to GitHub.
+
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "rg-terraform-state"
+    storage_account_name = "yourtfstateaccount"
+    container_name       = "tfstate"
+    key                  = "azure-landing-zone-lite.tfstate"
+  }
+}

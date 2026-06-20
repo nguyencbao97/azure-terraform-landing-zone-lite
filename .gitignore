@@ -1,0 +1,20 @@
+# Terraform local files
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+
+# Local variable files may contain subscription-specific details
+terraform.tfvars
+*.auto.tfvars
+*.auto.tfvars.json
+
+# Terraform plan files
+*.tfplan
+plan.out
+
+# OS/editor files
+.DS_Store
+.vscode/
+.idea/
