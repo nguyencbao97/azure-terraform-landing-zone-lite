@@ -1,57 +1,71 @@
-# How This Project Works
+# How It Works
 
-This file explains the project in plain English.
+This project uses Terraform to define Azure infrastructure as code.
 
-## 1. Terraform reads the configuration
+## Root module
 
-Terraform reads all `.tf` files in the root folder and modules folder.
+The root module creates the Azure Resource Group and calls the reusable modules:
 
-The root folder defines:
+- `network`
+- `security`
+- `application`
 
-- Provider configuration
-- Variables
-- Common tags
-- Resource group
-- Calls to the network and security modules
-- Outputs
+The application module is optional and is controlled by this variable:
 
-## 2. Terraform authenticates to Azure
+```hcl
+deploy_application = false
+```
 
-When you run `az login`, Azure CLI stores your login session. The AzureRM provider can use that session when Terraform runs locally.
+Set it to `true` only when you want to test the App Service workload.
 
-## 3. Terraform creates the resource group
-
-The resource group is the container for all resources in this project.
-
-## 4. Terraform calls the network module
+## Network module
 
 The network module creates:
 
-- Virtual network
+- Virtual Network
 - Public subnet
 - Private subnet
-- NSG for public subnet
-- NSG for private subnet
+- Network Security Group for public subnet
+- Network Security Group for private subnet
 - NSG associations
 
-## 5. Terraform calls the security module
+The goal is to show Azure networking fundamentals without making the lab too expensive.
+
+## Security module
 
 The security module creates:
 
-- Storage account
-- Key Vault
-- Log Analytics workspace
+- Storage Account with secure defaults
+- Key Vault using RBAC authorization
+- Log Analytics Workspace
 
-## 6. Terraform stores state
+This module represents the common security and monitoring foundation of a small Azure environment.
 
-Terraform creates a state file that maps your Terraform code to the real Azure resources. The `.gitignore` file prevents state files from being committed to GitHub.
+## Application module
 
-## 7. GitHub Actions validates the code
+The application module creates:
 
-When the project is uploaded to GitHub, the workflow checks:
+- Linux App Service Plan
+- Linux Web App
+- Application Insights
+- System-assigned managed identity
+- Key Vault RBAC role assignment
+- Diagnostic settings to Log Analytics
 
-- Whether Terraform files are formatted correctly
-- Whether Terraform can initialize without a backend
-- Whether the configuration is valid
+This shows how a cloud engineer connects compute, identity, monitoring, and security together.
 
-The workflow does not deploy resources automatically. That keeps the project safer for a public GitHub portfolio.
+## GitHub Actions
+
+The GitHub Actions workflow runs Terraform checks on every push to `main` and on pull requests:
+
+```bash
+terraform fmt -check -recursive
+terraform init -backend=false
+terraform validate
+```
+
+It does not run `terraform apply`, so Azure credentials are not required in GitHub.
+
+## Cost note
+
+The base landing zone is designed to be cost-conscious. If you enable the optional application workload, review Azure pricing for the selected App Service SKU and destroy the resources when finished testing.

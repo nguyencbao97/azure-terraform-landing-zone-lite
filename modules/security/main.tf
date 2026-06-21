@@ -31,7 +31,7 @@ resource "azurerm_storage_account" "main" {
 }
 
 resource "azurerm_key_vault" "main" {
-  name                = "kv-${substr(replace(var.name_prefix, "-", ""), 0, 12)}-${random_string.suffix.result}"
+  name                = "kv-${var.name_prefix}-${random_string.suffix.result}"
   location            = var.location
   resource_group_name = var.resource_group_name
   tenant_id           = data.azurerm_client_config.current.tenant_id

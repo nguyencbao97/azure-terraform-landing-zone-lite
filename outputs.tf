@@ -32,3 +32,18 @@ output "log_analytics_workspace_name" {
   description = "Name of the Log Analytics workspace."
   value       = module.security.log_analytics_workspace_name
 }
+
+output "web_app_name" {
+  description = "Name of the optional Web App. Null when deploy_application is false."
+  value       = try(module.application[0].web_app_name, null)
+}
+
+output "web_app_default_hostname" {
+  description = "Default hostname of the optional Web App. Null when deploy_application is false."
+  value       = try(module.application[0].web_app_default_hostname, null)
+}
+
+output "application_insights_name" {
+  description = "Name of the optional Application Insights resource. Null when deploy_application is false."
+  value       = try(module.application[0].application_insights_name, null)
+}

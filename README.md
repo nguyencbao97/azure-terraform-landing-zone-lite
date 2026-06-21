@@ -2,9 +2,13 @@
 
 A personal cloud engineering project that provisions a small, resume-friendly Azure environment using Terraform.
 
-This project is intentionally **cost-conscious**. It does not deploy virtual machines, Kubernetes, databases, or always-running compute. It focuses on core Azure cloud engineering concepts: resource organization, networking, security, monitoring, naming, tagging, and infrastructure-as-code structure.
+This project is intentionally **cost-conscious**. The base deployment does not deploy virtual machines, Kubernetes, databases, or always-running compute. It focuses on core Azure cloud engineering concepts: resource organization, networking, security, monitoring, naming, tagging, and infrastructure-as-code structure.
+
+Phase 2 adds an **optional application workload** so the project shows more realistic cloud engineering skills: App Service, Application Insights, managed identity, Key Vault access, and diagnostic settings.
 
 ## What this project builds
+
+### Base landing zone
 
 - Azure Resource Group
 - Virtual Network
@@ -15,6 +19,17 @@ This project is intentionally **cost-conscious**. It does not deploy virtual mac
 - Key Vault using Azure RBAC authorization
 - Log Analytics Workspace
 - Consistent tagging for environment, owner, and project
+
+### Optional Phase 2 application workload
+
+When `deploy_application = true`, the project also builds:
+
+- Linux App Service Plan
+- Linux Web App
+- System-assigned managed identity
+- Application Insights linked to Log Analytics
+- Key Vault RBAC role assignment for the Web App identity
+- Diagnostic settings sending Web App logs/metrics to Log Analytics
 
 ## Architecture
 
@@ -29,7 +44,15 @@ Resource Group
 │
 ├── Storage Account
 ├── Key Vault
-└── Log Analytics Workspace
+├── Log Analytics Workspace
+│
+└── Optional Application Workload
+    ├── App Service Plan
+    ├── Linux Web App
+    │   └── System-assigned managed identity
+    ├── Application Insights
+    ├── Key Vault Secrets User RBAC assignment
+    └── Diagnostic settings to Log Analytics
 ```
 
 ## Why this project matters
@@ -41,7 +64,10 @@ This project demonstrates the cloud engineering skills employers look for:
 - Resource naming and tagging
 - Secure storage configuration
 - Key Vault deployment
-- Log Analytics deployment
+- Managed identity and RBAC pattern
+- Log Analytics and Application Insights monitoring
+- App Service workload deployment
+- Diagnostic settings for observability
 - Basic module structure
 - GitHub repository documentation
 - GitHub Actions validation workflow
@@ -61,8 +87,13 @@ azure-terraform-landing-zone-lite/
 ├── .github/workflows/
 │   └── terraform-checks.yml
 ├── docs/
+│   ├── how-it-works.md
 │   └── interview-notes.md
 ├── modules/
+│   ├── application/
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   └── outputs.tf
 │   ├── network/
 │   │   ├── main.tf
 │   │   ├── variables.tf
@@ -110,13 +141,6 @@ If you have multiple Azure subscriptions, select the right one:
 az account set --subscription "YOUR-SUBSCRIPTION-ID"
 ```
 
-Also put the same subscription ID in `terraform.tfvars` because the AzureRM provider version used in this project expects a subscription ID.
-
-```bash
-# terraform.tfvars
-subscription_id = "YOUR-SUBSCRIPTION-ID"
-```
-
 ### 3. Create your variables file
 
 Copy the example file:
@@ -125,7 +149,19 @@ Copy the example file:
 cp terraform.tfvars.example terraform.tfvars
 ```
 
-Then edit `terraform.tfvars`, replace the placeholder `subscription_id`, and change the other values if needed.
+Then edit `terraform.tfvars` and change the values if needed.
+
+For the safest low-cost test, keep:
+
+```hcl
+deploy_application = false
+```
+
+To test the Phase 2 workload, change it to:
+
+```hcl
+deploy_application = true
+```
 
 ### 4. Initialize Terraform
 
@@ -178,8 +214,8 @@ The file `backend.tf.example` shows how remote state could be configured using A
 
 ## Resume bullet you can use
 
-> Built a personal Azure infrastructure-as-code lab using Terraform to provision resource groups, virtual networks, subnets, network security groups, storage, Key Vault, and Log Analytics with reusable modules and GitHub Actions validation.
+> Built a personal Azure infrastructure-as-code lab using Terraform to provision modular networking, security, storage, Key Vault, Log Analytics, optional App Service, Application Insights, managed identity, RBAC, and GitHub Actions validation.
 
 ## Interview explanation
 
-> I built this personal lab to strengthen my cloud engineering and Terraform skills because I cannot freely deploy infrastructure-as-code in my production work environment. The project uses Terraform modules to deploy a small Azure landing zone with networking, security, storage, Key Vault, monitoring, and standard tags. I also added a GitHub Actions workflow for formatting and validation checks.
+> I built this personal lab to strengthen my cloud engineering and Terraform skills because I cannot freely deploy infrastructure-as-code in my production work environment. The project uses Terraform modules to deploy a small Azure landing zone with networking, security, storage, Key Vault, monitoring, and standard tags. I later added an optional application workload using App Service, Application Insights, managed identity, Key Vault RBAC, and diagnostic settings to make the lab closer to a real cloud environment.

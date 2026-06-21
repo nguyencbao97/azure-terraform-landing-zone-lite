@@ -1,8 +1,3 @@
-variable "subscription_id" {
-  description = "Azure subscription ID where resources will be deployed."
-  type        = string
-}
-
 variable "project_name" {
   description = "Short project name used for resource naming. Use lowercase letters and numbers only."
   type        = string
@@ -53,4 +48,16 @@ variable "private_subnet_prefix" {
   description = "CIDR block for the private subnet."
   type        = list(string)
   default     = ["10.20.2.0/24"]
+}
+
+variable "deploy_application" {
+  description = "Set to true to deploy the optional App Service, Application Insights, managed identity, and monitoring resources."
+  type        = bool
+  default     = false
+}
+
+variable "app_service_sku_name" {
+  description = "SKU name for the optional App Service Plan. F1 is cost-conscious for lab use where available."
+  type        = string
+  default     = "F1"
 }
